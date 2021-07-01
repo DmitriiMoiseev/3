@@ -3,14 +3,15 @@ package ru.geekbrains.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import ru.geekbrains.persist.Product;
 import ru.geekbrains.persist.ProductRepository;
+
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/product")
@@ -44,7 +45,9 @@ public class ProductController {
     public String editProduct(@PathVariable("id") Long id, Model model) {
         logger.info("Edit page for id {} requested", id);
 
-        model.addAttribute("product", productRepository.findById(id));
+
+        model.addAttribute("product", productRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Product not found")));
         return "product_form";
     }
 
@@ -52,13 +55,16 @@ public class ProductController {
     public String update(Product product) {
         logger.info("Saving product");
 
-        if (product.getId() != null) {
-            logger.info("Updating product with id {}", product.getId());
-            productRepository.update(product);
-        } else {
-            logger.info("Creating new product");
-            productRepository.insert(product);
-        }
+        productRepository.save(product);
         return "redirect:/product";
+    }
+
+//    @ResponseStatus(HttpStatus.NOT_FOUND))
+    @ExceptionHandler
+    public ModelAndView notFoundExceptionHandler(NotFoundException ex) {
+        ModelAndView modelAndView = new ModelAndView("not_found");
+        modelAndView.addObject("message", ex.getMessage());
+        modelAndView.setStatus(HttpStatus.NOT_FOUND);
+        return modelAndView;
     }
 }
