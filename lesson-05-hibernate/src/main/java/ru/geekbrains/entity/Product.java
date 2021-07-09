@@ -21,15 +21,20 @@ public class Product {
     @Column(nullable = false)
     private Long price;
 
+    @JoinColumn(name = "clientId")
+    @ManyToOne
+    private Client client;
+
 //    @Transient - если не хочется мапить поле в таблице
 
     public Product() {
     }
 
-    public Product(Long id, String productname, Long price) {
+    public Product(Long id, String productname, Long price, Client client) {
         this.id = id;
         this.productname = productname;
         this.price = price;
+        this.client = client;
     }
 
     public Long getId() {
@@ -56,12 +61,21 @@ public class Product {
         this.price = price;
     }
 
+    public Client getClient() {
+        return client;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
     @Override
     public String toString() {
         return "Product{" +
                 "id=" + id +
                 ", productname='" + productname + '\'' +
-                ", price='" + price + '\'' +
+                ", price=" + price +
+                ", client=" + client.getClientName() +
                 '}';
     }
 }
