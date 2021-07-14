@@ -16,7 +16,8 @@ public class Client {
     @Column(nullable = false)
     private String clientName;
 
-    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
+//    @OneToMany(mappedBy = "clients", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "clients")
     private List<Product> productList = new ArrayList<>();
 
     public Client() {

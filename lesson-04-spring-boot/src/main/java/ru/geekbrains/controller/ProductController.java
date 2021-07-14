@@ -1,15 +1,21 @@
 package ru.geekbrains.controller;
 
+import org.apache.catalina.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import ru.geekbrains.persist.Product;
 import ru.geekbrains.persist.ProductRepository;
+
+import javax.validation.Valid;
+import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/product")
@@ -25,10 +31,33 @@ public class ProductController {
     }
 
     @GetMapping
-    public String listPage(Model model) {
+    public String listPage(Model model,
+                           @RequestParam("productnameFilter")Optional<String> productnameFilter,
+                           @RequestParam("priceFilter")Optional<String> priceFilter) {
         logger.info("Product list page requested");
-        model.addAttribute("products", productRepository.findAll());
-        return  "products";
+
+        List<Product> products;
+        if (productnameFilter.isPresent()) {
+            products = productRepository.findByProductnameStartsWith(productnameFilter.get());
+        } else if (priceFilter.isPresent()) {
+            products = productRepository.findByPrice(priceFilter.get());
+        } else if (productnameFilter.isPresent() && priceFilter.isPresent()) {
+            products = productRepository.findByProductnameStartsWith(productnameFilter.get());
+            products = productRepository.findByPrice(priceFilter.get());
+        } else {
+            products = productRepository.findAll();
+        }
+
+        model.addAttribute("products", products);
+        return "products";
+//
+//         вместо if else
+//        List<Product> products = productnameFilter
+//                .map(productRepository::findByProductnameStartsWith)
+//                .orElseGet(productRepository::findAll);
+//
+//        model.addAttribute("products", products);
+//        return "products";
     }
 
     @GetMapping("/new")
@@ -43,17 +72,29 @@ public class ProductController {
     public String editProduct(@PathVariable("id") Long id, Model model) {
         logger.info("Edit page for id {} requested", id);
 
-
         model.addAttribute("product", productRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Product not found")));
+
         return "product_form";
     }
 
     @PostMapping
-    public String update(Product product) {
+    public String update(@Valid Product product, BindingResult result) {
         logger.info("Saving product");
 
+        if (result.hasErrors()) {
+            return "product_form";
+        }
+
         productRepository.save(product);
+        return "redirect:/product";
+    }
+
+    @DeleteMapping("/{id}")
+    public String deleteProduct(@PathVariable("id") Long id) {
+        logger.info("Deleting product with id {}", id);
+
+        productRepository.deleteById(id);
         return "redirect:/product";
     }
 
