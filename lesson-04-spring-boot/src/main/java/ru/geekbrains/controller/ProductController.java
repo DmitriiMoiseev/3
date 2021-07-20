@@ -4,6 +4,9 @@ import org.apache.catalina.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,9 +15,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import ru.geekbrains.persist.Product;
 import ru.geekbrains.persist.ProductRepository;
+import ru.geekbrains.persist.ProductSpecification;
 
 import javax.validation.Valid;
-import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -33,22 +36,38 @@ public class ProductController {
     @GetMapping
     public String listPage(Model model,
                            @RequestParam("productnameFilter")Optional<String> productnameFilter,
-                           @RequestParam("priceFilter")Optional<String> priceFilter) {
+                           @RequestParam("priceFilter")Optional<String> priceFilter,
+                           @RequestParam("page")Optional<Integer> page,
+                           @RequestParam("size")Optional<Integer> size,
+                           @RequestParam("sortField") Optional<String> sortField) {
         logger.info("Product list page requested");
 
-        List<Product> products;
-        if (productnameFilter.isPresent()) {
-            products = productRepository.findByProductnameStartsWith(productnameFilter.get());
-        } else if (priceFilter.isPresent()) {
-            products = productRepository.findByPrice(priceFilter.get());
-        } else if (productnameFilter.isPresent() && priceFilter.isPresent()) {
-            products = productRepository.findByProductnameStartsWith(productnameFilter.get());
-            products = productRepository.findByPrice(priceFilter.get());
-        } else {
-            products = productRepository.findAll();
+//        List<Product> products;
+//        if (productnameFilter.isPresent()) {
+//            products = productRepository.findByProductnameStartsWith(productnameFilter.get());
+//        } else if (priceFilter.isPresent()) {
+//            products = productRepository.findByPrice(priceFilter.get());
+//        } else if (productnameFilter.isPresent() && priceFilter.isPresent()) {
+//            products = productRepository.findByProductnameStartsWith(productnameFilter.get());
+//            products = productRepository.findByPrice(priceFilter.get());
+//        } else {
+//            products = productRepository.findAll();
+//        }
+//
+//        model.addAttribute("products", products);
+
+        Specification<Product> spec = Specification.where(null);
+        if (productnameFilter.isPresent() && !productnameFilter.get().isBlank()) {
+            spec = spec.and(ProductSpecification.productnamePrefix(productnameFilter.get()));
+        }
+        if (priceFilter.isPresent() && !priceFilter.get().isBlank()) {
+            spec = spec.and(ProductSpecification.price(priceFilter.get()));
         }
 
-        model.addAttribute("products", products);
+        model.addAttribute("products", productRepository.findAll(spec,
+                PageRequest.of(page.orElse(1) - 1, size.orElse(3),
+                        Sort.by(sortField.orElse("id")))));
+
         return "products";
 //
 //         вместо if else
