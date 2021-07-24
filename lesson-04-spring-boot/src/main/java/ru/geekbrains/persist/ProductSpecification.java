@@ -8,8 +8,8 @@ public final class ProductSpecification {
         return (root, query, builder) -> builder.like(root.get("productname"), prefix + "%");
     }
 
-    public static Specification<Product> price(String priceFilter) {
-        return (root, query, builder) -> builder.like(root.get("price"), priceFilter);
+    public static Specification<Product> price(Integer priceFilter) {
+        return (root, query, builder) -> builder.lessThanOrEqualTo(root.get("price"), priceFilter);
     }
 
 

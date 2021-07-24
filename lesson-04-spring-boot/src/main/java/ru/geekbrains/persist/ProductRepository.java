@@ -8,6 +8,6 @@ import java.util.List;
 public interface ProductRepository  extends JpaRepository<Product, Long>, JpaSpecificationExecutor<Product> {
 
     List<Product> findByProductnameStartsWith(String prefix);
-    List<Product> findByPrice(String prefix);
+    List<Product> findByPrice(Integer prefix);
 
 }
