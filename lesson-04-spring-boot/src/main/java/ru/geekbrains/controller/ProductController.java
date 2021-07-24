@@ -1,6 +1,5 @@
 package ru.geekbrains.controller;
 
-import org.apache.catalina.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,11 +10,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import ru.geekbrains.persist.Product;
-import ru.geekbrains.persist.ProductRepository;
+import ru.geekbrains.service.ProductService;
 
 import javax.validation.Valid;
-import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/product")
@@ -23,41 +20,21 @@ public class ProductController {
 
     private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
 
-    private final ProductRepository productRepository;
+    private final ProductService productService;
 
     @Autowired
-    public ProductController(ProductRepository productRepository) {
-        this.productRepository = productRepository;
+    public ProductController(ProductService productService) {
+        this.productService = productService;
     }
 
     @GetMapping
     public String listPage(Model model,
-                           @RequestParam("productnameFilter")Optional<String> productnameFilter,
-                           @RequestParam("priceFilter")Optional<String> priceFilter) {
+                           ProductListParams productListParams) {
         logger.info("Product list page requested");
 
-        List<Product> products;
-        if (productnameFilter.isPresent()) {
-            products = productRepository.findByProductnameStartsWith(productnameFilter.get());
-        } else if (priceFilter.isPresent()) {
-            products = productRepository.findByPrice(priceFilter.get());
-        } else if (productnameFilter.isPresent() && priceFilter.isPresent()) {
-            products = productRepository.findByProductnameStartsWith(productnameFilter.get());
-            products = productRepository.findByPrice(priceFilter.get());
-        } else {
-            products = productRepository.findAll();
-        }
+        model.addAttribute("products", productService.findWhitFilter(productListParams));
 
-        model.addAttribute("products", products);
         return "products";
-//
-//         вместо if else
-//        List<Product> products = productnameFilter
-//                .map(productRepository::findByProductnameStartsWith)
-//                .orElseGet(productRepository::findAll);
-//
-//        model.addAttribute("products", products);
-//        return "products";
     }
 
     @GetMapping("/new")
@@ -72,7 +49,7 @@ public class ProductController {
     public String editProduct(@PathVariable("id") Long id, Model model) {
         logger.info("Edit page for id {} requested", id);
 
-        model.addAttribute("product", productRepository.findById(id)
+        model.addAttribute("product", productService.findById(id)
                 .orElseThrow(() -> new NotFoundException("Product not found")));
 
         return "product_form";
@@ -86,7 +63,7 @@ public class ProductController {
             return "product_form";
         }
 
-        productRepository.save(product);
+        productService.save(product);
         return "redirect:/product";
     }
 
@@ -94,7 +71,7 @@ public class ProductController {
     public String deleteProduct(@PathVariable("id") Long id) {
         logger.info("Deleting product with id {}", id);
 
-        productRepository.deleteById(id);
+        productService.deleteById(id);
         return "redirect:/product";
     }
 
