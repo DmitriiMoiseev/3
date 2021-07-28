@@ -1,6 +1,7 @@
 package ru.geekbrains;
 
 import org.hibernate.cfg.Configuration;
+import ru.geekbrains.dao.ClientDao;
 import ru.geekbrains.entity.Product;
 import ru.geekbrains.entity.ProductDao;
 
@@ -15,31 +16,27 @@ import java.util.ListIterator;
 public class Main05 {
     public static void main(String[] args) {
 
-        ProductDao productDao = new ProductDao();
-
-        EntityManagerFactory emFactory = new Configuration()
-                .configure("hibernate.cfg.xml")
-                .buildSessionFactory();
-
-        EntityManager em = emFactory.createEntityManager();
-
-        em.getTransaction().begin();
-
-        Product product = productDao.findById(em, 4L);
-        System.out.println(product);
-
-        List<Product> products;
-        products = productDao.findAll(em);
-        System.out.println(products);
-
-        productDao.deleteById(em, 8L);
-
-        Product product11 = new Product(8L, "product 5", 50L);
-        productDao.saveOrUpdate(em, product11);
-
-        em.getTransaction().commit();
-
-        em.close();
+//        EntityManagerFactory emFactory = new Configuration()
+//                .configure("hibernate.cfg.xml")
+//                .buildSessionFactory();
+//
+//        ProductDao productDao = new ProductDao(emFactory);
+//
+//        Product product = productDao.findById(em, 4L);
+//        System.out.println(product);
+//
+//        List<Product> products;
+//        products = productDao.findAll(em);
+//        System.out.println(products);
+//
+//        productDao.deleteById(em, 8L);
+//
+//        Product product11 = new Product(8L, "product 5", 50L);
+//        productDao.saveOrUpdate(em, product11);
+//
+//        em.getTransaction().commit();
+//
+//        em.close();
 
 //        ==============================================================
 //        INSERT
