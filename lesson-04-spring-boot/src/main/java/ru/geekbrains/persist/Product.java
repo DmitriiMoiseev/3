@@ -2,7 +2,6 @@ package ru.geekbrains.persist;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import java.math.BigDecimal;
 
 @Entity
 @Table(name = "products")
@@ -17,12 +16,12 @@ public class Product {
     private String productname;
 
     @Column
-    private BigDecimal price;
+    private Integer price;
 
     public Product() {
     }
 
-    public Product(Long id, String productname, BigDecimal price) {
+    public Product(Long id, String productname, Integer price) {
         this.id = id;
         this.productname = productname;
         this.price = price;
@@ -44,11 +43,11 @@ public class Product {
         this.productname = productname;
     }
 
-    public BigDecimal getPrice() {
+    public Integer getPrice() {
         return price;
     }
 
-    public void setPrice(BigDecimal price) {
+    public void setPrice(Integer price) {
         this.price = price;
     }
 }
