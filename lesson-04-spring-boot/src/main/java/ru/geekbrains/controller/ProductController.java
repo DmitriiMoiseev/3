@@ -65,6 +65,19 @@ public class ProductController {
 
         productService.save(product);
         return "redirect:/product";
+
+//        if(result.hasErrors()) {
+//            return "product_form";
+//        }
+//
+//        if (product.getId() != null) {
+//            logger.info("Updating user with id {}", product.getId());
+//            productService.update(product);
+//        } else {
+//            logger.info("Creating new user");
+//            productService.insert(product);
+//        }
+//        return "redirect:/product";
     }
 
     @DeleteMapping("/{id}")

@@ -22,7 +22,7 @@ public class ProductResource {
         return productService.findAll();
     }
 
-    @GetMapping(path="/id", produces = "application/json")
+    @GetMapping(path="/{id}", produces = "application/json")
     public Product findById(@PathVariable("id") Long id){
         return productService.findById(id)
                 .orElseThrow(() -> new NotFoundException("Product not found"));
@@ -31,7 +31,7 @@ public class ProductResource {
     @PostMapping(produces = "application/json")
     public Product create(@RequestBody Product product) {
         if (product.getId() != null) {
-            throw new BadReqeustException("Product Id should be null");
+            throw new BadRequestException("Product Id should be null");
         }
         productService.save(product);
         return product;
@@ -40,12 +40,12 @@ public class ProductResource {
     @PutMapping(produces = "application/json")
     public void update(@RequestBody Product product) {
         if (product.getId() == null) {
-            throw new BadReqeustException("Product Id shouldn't be null");
+            throw new BadRequestException("Product Id shouldn't be null");
         }
         productService.save(product);
     }
 
-    @DeleteMapping(path="/id", produces = "application/json")
+    @DeleteMapping(path="/{id}", produces = "application/json")
     public void delete(@PathVariable("id") Long id){
         productService.deleteById(id);
     }

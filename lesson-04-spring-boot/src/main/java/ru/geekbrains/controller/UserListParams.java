@@ -1,10 +1,12 @@
 package ru.geekbrains.controller;
 
-public class ProductListParams {
+public class UserListParams {
 
-    private String productnameFilter;
+    private String usernameFilter;
 
-    private Integer priceFilter;
+    private Integer minAge;
+
+    private Integer maxAge;
 
     private Integer page;
 
@@ -12,20 +14,28 @@ public class ProductListParams {
 
     private String sortField;
 
-    public String getProductnameFilter() {
-        return productnameFilter;
+    public String getUsernameFilter() {
+        return usernameFilter;
     }
 
-    public void setProductnameFilter(String productnameFilter) {
-        this.productnameFilter = productnameFilter;
+    public void setUsernameFilter(String usernameFilter) {
+        this.usernameFilter = usernameFilter;
     }
 
-    public Integer getPriceFilter() {
-        return priceFilter;
+    public Integer getMinAge() {
+        return minAge;
     }
 
-    public void setPriceFilter(Integer priceFilter) {
-        this.priceFilter = priceFilter;
+    public void setMinAge(Integer minAge) {
+        this.minAge = minAge;
+    }
+
+    public Integer getMaxAge() {
+        return maxAge;
+    }
+
+    public void setMaxAge(Integer maxAge) {
+        this.maxAge = maxAge;
     }
 
     public Integer getPage() {

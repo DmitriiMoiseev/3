@@ -2,7 +2,6 @@ package ru.geekbrains.persist;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import java.math.BigDecimal;
 
 @Entity
 @Table(name = "products")

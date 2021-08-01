@@ -5,7 +5,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 import ru.geekbrains.controller.ProductListParams;
 import ru.geekbrains.persist.Product;
 import ru.geekbrains.persist.ProductRepository;
